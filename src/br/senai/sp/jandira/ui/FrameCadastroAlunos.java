@@ -59,7 +59,7 @@ public class FrameCadastroAlunos extends JFrame {
 		
 		JComboBox comboPeriodo = new JComboBox();
 		comboPeriodo.setFont(new Font("Times New Roman", Font.PLAIN, 13));
-		comboPeriodo.setModel(new DefaultComboBoxModel(Periodo.()));
+		comboPeriodo.setModel(new DefaultComboBoxModel(Periodo.values()));
 		comboPeriodo.setBounds(10, 136, 130, 22);
 		contentPane.add(comboPeriodo);
 		

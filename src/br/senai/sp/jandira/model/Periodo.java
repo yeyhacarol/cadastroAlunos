@@ -21,5 +21,11 @@ public enum Periodo {
 	public String getDescricao() {
 		return descricao;
 	}
+	
+	@Override
+	
+	public String toString(){
+	    return this.descricao;
+	} 
 
 }
