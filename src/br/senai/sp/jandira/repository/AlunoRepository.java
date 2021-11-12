@@ -29,5 +29,10 @@ public class AlunoRepository {
 	public Aluno[] listarTodos() {
 		return turma;
 	}
+	
+	//método que retorna o tamanho total da turma 
+	public int getTamanho() {
+		return turma.length;
+	}
 
 }

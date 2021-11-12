@@ -7,6 +7,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -17,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 
@@ -33,12 +36,13 @@ public class FrameCadastroAlunos extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtMatricula;
 	private JTextField txtNome;
-	
+
 	private int posicao;
 
 	public FrameCadastroAlunos() {
 
-		//String[] dias = { "domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado" };
+		// String[] dias = { "domingo", "segunda", "terça", "quarta", "quinta", "sexta",
+		// "sábado" };
 
 		setTitle("Cadastro de Alunos");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -109,36 +113,90 @@ public class FrameCadastroAlunos extends JFrame {
 		contentPane.add(scrollPaneListaAlunos);
 
 		JList listAlunos = new JList();
-		
+
+		// o default model é necessário para que os itens apareçam na área desejada,
+		// nesse caso os nomes dos alunos na viewport
 		DefaultListModel<String> listaModel = new DefaultListModel<String>();
 		listAlunos.setModel(listaModel);
-		
+
 		listAlunos.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		scrollPaneListaAlunos.setViewportView(listAlunos);
-		
-		
-		AlunoRepository turma = new AlunoRepository(3);	
-		
-		
-		
+
+		JButton btnMostrarAluno = new JButton("Exibir aluno");
+		btnMostrarAluno.setBounds(27, 183, 89, 23);
+		contentPane.add(btnMostrarAluno);
+
+		AlunoRepository turma = new AlunoRepository(2);
+
 		btnSalvar.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				Aluno aluno = new Aluno();
-				
+
 				aluno.setMatricula(txtMatricula.getText());
 				aluno.setNome(txtNome.getText());
-				
+
 				turma.salvarAluno(aluno, posicao);
-				
+
+				aluno.setPeriodo(definirPeriodo(comboPeriodo.getSelectedIndex()));
+
 				posicao++;
-				
+
 				listaModel.addElement(aluno.getNome());
-			
+
+				// isso bloqueia o botão quando a quantidade de alunos na turma igual ao limite
+				if (posicao == turma.getTamanho()) {
+					btnSalvar.setEnabled(false);
+
+					// essa classe envia mensagens para os usuários
+					// null pois a mensagem aparecerá na janela que executou a ação
+					JOptionPane.showMessageDialog(null, "Turma cheia!", "CHEIO!", JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		});
-		
+
+		listAlunos.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+
+				Aluno aluno = turma.listarAluno(listAlunos.getSelectedIndex());
+				txtMatricula.setText(aluno.getMatricula());
+				txtNome.setText(aluno.getNome());
+				comboPeriodo.setSelectedIndex(aluno.getPeriodo().ordinal());
+			}
+		});
+
+		// teste para saber se está funcionando esperadamente
+		btnMostrarAluno.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				for (Aluno aluno : turma.listarTodos()) {
+
+					System.out.println(aluno.getMatricula());
+					System.out.println(aluno.getNome());
+					System.out.println(aluno.getPeriodo().getDescricao());
+				}
+
+			}
+		});
+
+	}
+
+	// esse método define qual será o período selecionado
+	private Periodo definirPeriodo(int periodoSelecionado) {
+
+		if (periodoSelecionado == 0) {
+			return Periodo.MANHA;
+		} else if (periodoSelecionado == 1) {
+			return Periodo.TARDE;
+		} else {
+			return Periodo.NOITE;
+		}
+
 	}
 }
