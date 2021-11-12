@@ -126,7 +126,7 @@ public class FrameCadastroAlunos extends JFrame {
 		btnMostrarAluno.setBounds(27, 183, 89, 23);
 		contentPane.add(btnMostrarAluno);
 
-		AlunoRepository turma = new AlunoRepository(2);
+		AlunoRepository turma = new AlunoRepository();
 
 		btnSalvar.addActionListener(new ActionListener() {
 
@@ -145,6 +145,10 @@ public class FrameCadastroAlunos extends JFrame {
 				posicao++;
 
 				listaModel.addElement(aluno.getNome());
+				
+				txtMatricula.setText("");
+				txtNome.setText("");
+				comboPeriodo.setSelectedIndex(0);
 
 				// isso bloqueia o botão quando a quantidade de alunos na turma igual ao limite
 				if (posicao == turma.getTamanho()) {
